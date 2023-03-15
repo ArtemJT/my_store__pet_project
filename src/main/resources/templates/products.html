@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<head th:replace="~{fragments/common :: common_header(~{::title}, _)}">
+    <title th:text="#{product.title}"/>
+</head>
+<header th:replace="~{fragments/header :: header_bar}"></header>
+<body>
+
+<div class="container-fluid">
+    <!--    Table controls-->
+    <div th:replace="~{fragments/table_controls :: table_controls}"></div>
+
+    <!--Products table-->
+    <table class="table caption-top table-hover align-middle mb-0 bg-white">
+        <!--/*@thymesVar id="removeMsg" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+        <caption sec:authorize="hasAuthority('ADMIN')" th:switch="${removeMsg}">
+            <div>
+                <!--/*@thymesVar id="model" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+                <p th:case="removed" class="message"
+                   th:text="#{product.remove.msg.removed_1part} + ${model} + #{product.remove.msg.removed_2part}"/>
+                <p th:case="not_found" class="message"
+                   th:text="#{product.remove.msg.not_found_1part} + ${param.id} + #{product.remove.msg.not_found_2part}"/>
+                <p th:case="exception" class="message" th:text="#{product.remove.msg.exception}"/>
+            </div>
+        </caption>
+        <thead class="bg-light">
+        <tr>
+            <th>[[#{product.table.name}]]</th>
+            <th>[[#{product.table.model}]]</th>
+            <th>[[#{product.table.price}]]</th>
+            <th>[[#{product.table.status}]]</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+        <!--/*@thymesVar id="product" type="com.example.my_store__pet_project.dto.ProductDto"*/-->
+        <tr th:each="product : ${allProducts}" th:object="${product}">
+            <td>
+                <div class="d-flex align-items-center">
+                    <!--/*@thymesVar id="dbx" type="com.example.my_store__pet_project.configuration.DropboxConfig"*/-->
+                    <img
+                            th:src="*{getImageLink}"
+                            alt="Image"
+                            style="width: 145px; height: 145px"
+                            class="rounded-circle" src=""/>
+                    <div class="ms-4">
+                        <p class="fw-bold mb-1" th:text="*{productDetailsDto.name}"/>
+                    </div>
+                    <!-- Modal -->
+                    <button
+                            type="button"
+                            class="btn btn-secondary btn-sm btn-rounded ms-3"
+                            data-bs-toggle="modal" th:data-bs-target="*{'#modal'+productId}"
+                            th:text="#{product.table.details}">
+                    </button>
+                    <div class="modal fade" th:id="*{'modal'+productId}" tabindex="-1"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalLabel" th:text="*{model}"/>
+                                </div>
+                                <div class="modal-body d-flex align-items-center justify-content-center">
+                                    <div class="card" style="width: 18rem;">
+                                        <img th:src="*{getImageLink}" class="card-img-top" alt="Image" src=""/>
+                                        <div class="card-body">
+                                            <div class="text-center">
+                                                <h5 class="card-title" th:text="*{productDetailsDto.name}"/>
+                                                <p class="text-muted mb-4" th:text="*{categoryDto.name}"/>
+                                            </div>
+                                            <div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span th:text="#{product.table.date}"/><span
+                                                        th:text="*{dateAdded}"/>
+                                                </div>
+                                                <hr class="my-0"/>
+                                                <div class="d-flex justify-content-between">
+                                                    <span th:text="#{product.table.measure}"/><span
+                                                        th:text="*{categoryDto.measure}"/>
+                                                </div>
+                                                <hr class="my-0"/>
+                                                <div class="d-flex justify-content-between">
+                                                    <span th:text="#{product.table.status}"/><span
+                                                        th:text="*{stockStatusDto.status}"/>
+                                                </div>
+                                            </div>
+                                            <hr class="my-0"/>
+                                            <div class="d-flex justify-content-between total font-weight-bold mt-4">
+                                                <span th:text="#{product.table.price}"/><span th:text="'$'+*{price}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                            th:text="#{product.table.close}"></button>
+                                    <form sec:authorize="!hasAuthority('ADMIN')" th:action="@{/products}"
+                                          th:method="post">
+                                        <button type="submit" class="btn btn-success"
+                                                name="id" th:value="*{productId}" th:text="#{product.table.addToCart}">
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <p class="text-muted mb-0" th:text="*{model}"/>
+            </td>
+            <td>
+                <p class="fw-bold mb-1" th:text="'$'+*{price}"/>
+            </td>
+            <td>
+                <p class="mb-1" th:text="*{stockStatusDto.status}"/>
+            </td>
+            <td>
+                <form sec:authorize="!hasAuthority('ADMIN')" th:action="@{/products}" th:method="post">
+                    <button type="submit" class="btn btn-success btn-rounded btn-sm fw-bold"
+                            name="id" th:value="*{productId}" th:text="#{product.table.addToCart}">
+                    </button>
+                </form>
+
+                <form sec:authorize="hasAuthority('ADMIN')" th:action="@{/products/remove}" th:method="post">
+                    <button type="submit" class="btn btn-danger btn-rounded btn-sm fw-bold"
+                            name="id" th:value="${product.productId}" th:text="#{product.table.remove}">
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--    Table controls-->
+    <div class="container mb-5" th:insert="~{fragments/table_controls :: table_controls}"></div>
+
+</div>
+
+</body>
+<footer th:replace="~{fragments/footer :: footer_bar}"></footer>
+
+</html>

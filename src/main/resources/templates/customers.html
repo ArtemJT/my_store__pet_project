@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html">
+<head th:replace="~{fragments/common :: common_header(~{::title}, _)}">
+    <title th:text="#{customers.title}"/>
+</head>
+<header th:replace="~{fragments/header :: header_bar}"></header>
+<body>
+
+<section class="h-100" style="background-color: #eee;">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-normal mb-0 text-black" th:text="#{customers.caption}"/>
+            </div>
+
+            <div class="col-12">
+                <div class="card rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <table class="table table-hover">
+                            <thead class="bg-light">
+                            <tr>
+                                <th>#</th>
+                                <th th:text="#{customers.table.name}"/>
+                                <th th:text="#{customers.table.email}"/>
+                                <th th:text="#{customers.table.status}"/>
+                                <th th:text="#{customers.table.orders}"/>
+                                <th th:text="#{customers.table.actions}"/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--/*@thymesVar id="customer" type="com.example.my_store__pet_project.dto.UsersDto"*/-->
+                            <tr th:each="customer, stat : ${customers}">
+                                <td th:text="${stat.count}"/>
+                                <td th:text="${customer.name}"/>
+                                <td th:text="${customer.email}"/>
+                                <td th:text="${customer.status}"/>
+                                <td th:if="${customer.orderDtoList} == null" th:text="#{customers.table.no_orders}"/>
+                                <td th:unless="${customer.orderDtoList} == null">
+                                    <a th:href="@{/customers/orders(name=${customer.name})}"
+                                       class="btn btn-link btn-rounded btn-sm fw-bold"
+                                       th:text="${customer.orderDtoList.size()}"></a>
+                                </td>
+                                <td>
+                                    <form th:action="@{/customers}" th:method="post">
+                                        <button th:if="${customer.status.name()} == 'UNBLOCKED'" id="block"
+                                                type="submit" class="btn btn-link btn-rounded btn-sm fw-bold"
+                                                name="id" th:value="${customer.userId}" th:text="#{customers.block}">
+                                        </button>
+                                        <button th:if="${customer.status.name()} == 'BLOCKED'" type="submit"
+                                                class="btn btn-link btn-rounded btn-sm fw-bold"
+                                                name="id" th:value="${customer.userId}" th:text="#{customers.unblock}">
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<footer th:replace="~{fragments/footer :: footer_bar}"></footer>
+
+</html>

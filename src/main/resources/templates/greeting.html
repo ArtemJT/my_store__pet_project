@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="~{fragments/common :: common_header(_, _)}"><title></title>
+</head>
+<header th:replace="~{fragments/header :: header_bar}"></header>
+<body>
+<section class="h-100" style="background-color: #eee;">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="hello_user">
+                <h1>[[#{greeting_page}]] <span sec:authentication="name"></span></h1>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<footer th:replace="~{fragments/footer :: footer_bar}"></footer>
+</html>

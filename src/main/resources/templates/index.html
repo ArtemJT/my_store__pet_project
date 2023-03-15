@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: common_header(_, _)}"><title></title></head>
+<header th:insert="~{fragments/header :: header_bar}"></header>
+<body>
+<section class="h-100" style="background-color: #eee;">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <h1 th:text="#{main_page}"/>
+        </div>
+    </div>
+</section>
+</body>
+<footer th:insert="~{fragments/footer :: footer_bar}"></footer>
+</html>

@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en" class="no-js" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*@thymesVar id="size" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+<!--/*@thymesVar id="currentPage" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+<a th:fragment="sorting(pageSort, sortDesc, label)" class="dropdown-item"
+   th:href="@{'/products?' + 'sort=' + ${pageSort} + '&size=' + ${size} + '&page=' + ${currentPage} + '&desc=' + ${sortDesc}}"
+   th:text="${label}"/>
+</body>
+</html>

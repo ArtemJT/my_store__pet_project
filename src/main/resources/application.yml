@@ -1,0 +1,16 @@
+#Local TestDB:
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/testDB
+    username: testDB
+    password: testDB
+  jpa:
+    properties:
+      hibernate.default_schema: testDB
+    show-sql: true
+
+upload:
+  path: /img/catalog/uploaded/
+
+dropbox:
+  access-token: sl.BapO49Bu9yzCzrNf3zRA46LEWDWHXzG9QwmKxMPe0-iWvdsQtv1GAtLsRHAXZdgn2g4XdS_hFSxU8vycXFqhzqertZjEUCm0xyl1_uFml8kUvqHNuqzwPjHAvukxS3umlpq8WpPX

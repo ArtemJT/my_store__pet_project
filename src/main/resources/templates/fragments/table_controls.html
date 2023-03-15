@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:fragment="table_controls" class="container mt-3">
+    <!--/*@thymesVar id="totalPages" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+    <!--/*@thymesVar id="currentPage" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+    <nav class="pagination-control mx-4" aria-label="Pagination" th:if="${totalPages > 0}">
+        <ul class="pagination justify-content-start">
+            <li>
+                <div class="btn-group dropend me-5">
+                    <!--/*@thymesVar id="size" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" th:text="${size}"/>
+                    <div class="dropdown-menu text-small shadow">
+                        <a th:replace="~{fragments/sizing :: sizing(5)}"></a>
+                        <a th:replace="~{fragments/sizing :: sizing(10)}"></a>
+                        <a th:replace="~{fragments/sizing :: sizing(15)}"></a>
+                        <a th:replace="~{fragments/sizing :: sizing(20)}"></a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="btn-group dropend mx-5">
+                    <button id="sorting" class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" th:text="#{product.sorting}"/>
+                    <div class="dropdown-menu text-small shadow">
+                        <a th:replace="~{fragments/sorting :: sorting(dateAdded, true, #{product.sorting.date_desc})}"></a>
+                        <a th:replace="~{fragments/sorting :: sorting(dateAdded, false, #{product.sorting.date_asc})}"></a>
+                        <a th:replace="~{fragments/sorting :: sorting(model, false, #{product.sorting.model_asc})}"></a>
+                        <a th:replace="~{fragments/sorting :: sorting(model, true, #{product.sorting.model_desc})}"></a>
+                        <a th:replace="~{fragments/sorting :: sorting(price, false, #{product.sorting.price_asc})}"></a>
+                        <a th:replace="~{fragments/sorting :: sorting(price, true, #{product.sorting.price_desc})}"></a>
+                    </div>
+                </div>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page')}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="~{fragments/paging :: paging(${currentPage - 1}, #{product.table.prev}, 'Previous Page')}"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                th:each="page : ${#numbers.sequence((currentPage > 2 ? currentPage - 2 : 1), (currentPage + 2 < totalPages ? currentPage + 2 : totalPages))}">
+                <a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page})}"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item font-weight-bold"
+                th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="~{fragments/paging :: paging(${currentPage + 1}, #{product.table.next}, 'Next Page')}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page')}"></a>
+            </li>
+            <li>
+                <div class="btn ms-4" sec:authorize="hasAuthority('ADMIN')">
+                    <a class="href_button" th:href="@{/products/addProduct}" th:text="#{product.add}"/>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</body>
+</html>

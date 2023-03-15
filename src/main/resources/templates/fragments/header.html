@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+<header th:fragment="header_bar" class="sticky-top">
+    <div class="px-3 text-bg-dark">
+        <div class="container-fluid">
+            <div class="d-flex flex-wrap align-items-center justify-content-lg-between">
+                <a class="navbar-brand me-3" href="/">
+                    <img src="/logo.png" alt="My Store">
+                </a>
+
+                <div class="nav mx-3 my-md-0 justify-content-center">
+                    <a href="/" class="nav-link text-secondary">
+                        <svg th:insert="~{fragments/icons_svg :: home_btn}"
+                             class="bi d-block mx-auto mb-1" width="24" height="24"/>
+                        [[#{header.home}]]
+                    </a>
+                    <a th:href="@{/products}" class="nav-link text-white">
+                        <svg th:insert="~{fragments/icons_svg :: products_btn}"
+                             class="bi d-block mx-auto mb-1" width="24" height="24"/>
+                        [[#{header.products}]]
+                    </a>
+                    <a sec:authorize="hasAuthority('USER')" th:href="@{/orders}" class="nav-link text-white">
+                        <svg th:insert="~{fragments/icons_svg :: order_btn}"
+                             class="bi d-block mx-auto mb-1" width="24" height="24"/>
+                        [[#{header.orders}]]
+                    </a>
+                    <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/customers}" class="nav-link text-white">
+                        <svg th:insert="~{fragments/icons_svg :: customers_btn}"
+                             class="bi d-block mx-auto mb-1" width="24" height="24"/>
+                        [[#{header.customers}]]
+                    </a>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-center">
+                    <!-- Authentication -->
+                    <div sec:authorize="isAnonymous()" class="text-end mx-2">
+                        <a th:href="@{/auth/login}" type="button" class="btn btn-light text-dark"
+                           th:text="#{header.login}"/>
+                        <a th:href="@{/auth/registration}" type="button" class="btn btn-primary"
+                           th:text="#{header.sing_up}"/>
+                    </div>
+                    <div sec:authorize="isAuthenticated()" class="flex-shrink-0 dropdown mx-2">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            <span class="user-name" sec:authentication="name"></span>
+                            <svg th:replace="~{fragments/icons_svg :: user_btn}"/>
+                        </a>
+                        <div class="dropdown-menu text-small shadow" style="">
+                            <a class="dropdown-item" th:href="@{/greeting}" th:text="#{header.profile}"/>
+                            <hr class="dropdown-divider">
+                            <form th:action="@{/logout}" method="post">
+                                <input class="signOut-button" type="submit" th:value="#{header.sign_out}"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!--/*@thymesVar id="cart" type="com.example.my_store__pet_project.dto.Cart"*/-->
+                <a sec:authorize="!hasAuthority('ADMIN')" th:object="${session.get('cart')}"
+                   th:href="@{/cart}" type="button" class="btn btn-success">
+                    <svg th:replace="~{fragments/icons_svg :: cart_btn}"/>
+                    [[#{header.cart}]]
+                    <span id="navbarNotificationCounter" class="badge rounded-pill badge-notification bg-danger"
+                          style="color: rgb(255, 255, 255) !important;"
+                          th:unless="${#object} == null or ${#object.isEmpty()}" th:text="${#object.sizeValues()}"/>
+                </a>
+
+                <div class="dropdown">
+                    <a class="d-block link-light text-decoration-none dropdown-toggle" role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <svg th:insert="~{fragments/icons_svg :: translate_btn}" width="24" height="24"/>
+                    </a>
+                    <div class="dropdown-menu text-small shadow" style="">
+                        <a class="dropdown-item" href="?lang=en">
+                            <svg th:insert="~{fragments/icons_svg :: flag_gb}" width="24" height="24"/>
+                            [[#{lang.en}]]
+                        </a>
+                        <hr class="dropdown-divider">
+                        <a class="dropdown-item" href="?lang=ua">
+                            <svg th:insert="~{fragments/icons_svg :: flag_ua}" width="24" height="24"/>
+                            [[#{lang.ua}]]
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+</html>

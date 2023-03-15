@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html">
+<head th:replace="~{fragments/common :: common_header(~{::title}, _)}">
+    <title th:text="'Customer '+#{customers.orders.title}"/>
+</head>
+<header th:replace="~{fragments/header :: header_bar}"></header>
+<body>
+
+<section class="h-100" style="background-color: #eee;">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-normal mb-0 text-black" th:text="'&#34'+${name}+'&#34 '+#{customers.orders.caption}"/>
+                <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" th:text="#{orders.sorting}"></button>
+                <div class="dropdown-menu text-small shadow">
+                    <a class="dropdown-item" th:href="@{/customers/orders/(name=${name},desc=false)}"
+                       th:text="#{orders.sorting.date_asc}"/>
+                    <a class="dropdown-item" th:href="@{/customers/orders/(name=${name},desc=true)}"
+                       th:text="#{orders.sorting.date_desc}"/>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <table class="table table-hover">
+                            <thead class="bg-light">
+                            <tr>
+                                <th th:text="#{customers.orders.table.order}"/>
+                                <th th:text="#{customers.orders.table.date}"/>
+                                <th th:text="#{customers.orders.table.amount}"/>
+                                <th th:text="#{customers.orders.table.details}"/>
+                                <th th:text="#{customers.orders.table.status}"/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td th:text="${order.orderId}"></td>
+                                <td th:text="${order.dateAdded}"></td>
+                                <td th:text="'$'+${order.amount}"></td>
+                                <td>
+                                    <button
+                                            type="button"
+                                            class="btn btn-link btn-sm btn-rounded"
+                                            data-bs-toggle="modal" th:data-bs-target="${'#modal'+order.orderId}"
+                                            th:text="#{customers.orders.table.details}">
+                                    </button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" th:id="${'modal'+order.orderId}" tabindex="-1"
+                                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h6 class="fw-normal mb-0 text-black"
+                                                        th:text="#{orders.td_date} + ${order.dateAdded}"/>
+                                                    <h3 class="fw-bold mb-0 text-black"
+                                                        th:text="#{orders.td_order} + ${order.orderId}"/>
+                                                    <h5 class="fw-bold mb-0 text-black"
+                                                        th:text="#{orders.td_total} + '$' + ${order.amount}"/>
+                                                    <h6 class="fw-bold mb-0 text-black"
+                                                        th:text="#{customers.orders.table.status} + ': ' + ${order.status}"/>
+                                                </div>
+                                                <div class="modal-body d-flex align-items-center justify-content-center">
+                                                    <table class="table table-hover">
+                                                        <thead class="bg-light">
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th th:text="#{orders.table.model}"/>
+                                                            <th th:text="#{orders.table.name}"/>
+                                                            <th th:text="#{orders.table.measure}"/>
+                                                            <th th:text="#{orders.table.quantity}"/>
+                                                            <th th:text="#{orders.table.stock}"/>
+                                                            <th th:text="#{orders.table.cost}"/>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--/*@thymesVar id="item" type="com.example.my_store__pet_project.dto.OrderItemDto"*/-->
+                                                        <tr th:each="item, stat : ${order.orderItemDtoList}">
+                                                            <td th:text="${stat.count}"/>
+                                                            <td th:text="${item.productDto.model}"/>
+                                                            <td th:text="${item.productDto.productDetailsDto.name}"/>
+                                                            <td th:text="${item.productDto.categoryDto.measure}"/>
+                                                            <td th:text="${item.count}"/>
+                                                            <td th:text="${item.productDto.stockStatusDto.status}"/>
+                                                            <td th:text="'$'+${item.cost}"/>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal"
+                                                            th:text="#{customers.orders.modal.close}">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <form th:action="@{/customers/orders/(name=${name},orderId=${order.orderId})}"
+                                          method="post">
+                                        <button class="btn btn-outline-dark btn-sm dropstart" type="button"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false"
+                                                th:text="${order.status}">
+                                        </button>
+                                        <div class="dropdown-menu text-small shadow">
+                                            <button class="dropdown-item"
+                                                    type="submit"
+                                                    th:name="status"
+                                                    th:value="'REGISTERED'">REGISTERED
+                                            </button>
+                                            <button class="dropdown-item"
+                                                    type="submit"
+                                                    th:name="status"
+                                                    th:value="'PAID'">PAID
+                                            </button>
+                                            <button class="dropdown-item"
+                                                    type="submit"
+                                                    th:name="status"
+                                                    th:value="'CANCELED'">CANCELED
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<footer th:replace="~{fragments/footer :: footer_bar}"></footer>
+
+</html>

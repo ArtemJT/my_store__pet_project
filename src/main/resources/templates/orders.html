@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html">
+<head th:replace="~{fragments/common :: common_header(~{::title}, _)}">
+    <title th:text="#{orders.title}"/>
+</head>
+<header th:replace="~{fragments/header :: header_bar}"></header>
+<body>
+
+<section class="h-100" style="background-color: #eee;">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <!--/*@thymesVar id="orders" type="com.example.my_store__pet_project.dto.Cart"*/-->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-normal mb-0 text-black" th:text="#{orders.caption}"/>
+                <div th:unless="${orders.size()} == 0">
+                    <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false" th:text="#{orders.sorting}"/>
+                    <div class="dropdown-menu text-small shadow">
+                        <a class="dropdown-item" href="?desc=true" th:text="#{orders.sorting.date_desc}"/>
+                        <a class="dropdown-item" href="?desc=false" th:text="#{orders.sorting.date_asc}"/>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${orders.size()} == 0" class="col-11">
+                <div class="card rounded-3 mb-4">
+                    <div class="d-flex justify-content-center align-items-center mb-4">
+                        <h3 class="fw-normal mb-0 text-black" th:text="#{orders.no_orders}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div th:unless="${orders.size()} == 0" class="col-12">
+                <div th:each="order : ${orders}" class="card rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <h5 class="fw-normal mb-0 text-black"
+                                        th:text="#{orders.td_date} + ${order.dateAdded}"/>
+                                </td>
+                                <td colspan="3">
+                                    <h2 class="fw-bold mb-0 text-black"
+                                        th:text="#{orders.td_order} + ${order.orderId}"/>
+                                </td>
+                                <td>
+                                    <h4 class="fw-bold mb-0 text-black"
+                                        th:text="#{orders.td_total} + '$' + ${order.amount}"/>
+                                </td>
+                                <td>
+                                    <h5 class="fw-bold mb-0 text-black"
+                                        th:text="#{orders.status} + ': ' + ${order.status}"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table table-hover">
+                            <thead class="bg-light">
+                            <tr>
+                                <th>#</th>
+                                <th th:text="#{orders.table.model}"/>
+                                <th th:text="#{orders.table.name}"/>
+                                <th th:text="#{orders.table.measure}"/>
+                                <th th:text="#{orders.table.quantity}"/>
+                                <th th:text="#{orders.table.stock}"/>
+                                <th th:text="#{orders.table.cost}"/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--/*@thymesVar id="item" type="com.example.my_store__pet_project.dto.OrderItemDto"*/-->
+                            <tr th:each="item, stat : ${order.orderItemDtoList}">
+                                <td th:text="${stat.count}"/>
+                                <td th:text="${item.productDto.model}"/>
+                                <td th:text="${item.productDto.productDetailsDto.name}"/>
+                                <td th:text="${item.productDto.categoryDto.measure}"/>
+                                <td th:text="${item.count}"/>
+                                <td th:text="${item.productDto.stockStatusDto.status}"/>
+                                <td th:text="'$'+${item.cost}"/>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<footer th:replace="~{fragments/footer :: footer_bar}"></footer>
+
+</html>

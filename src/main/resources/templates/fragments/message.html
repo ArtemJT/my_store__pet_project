@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*@thymesVar id="message" type="com.example.my_store__pet_project.controller.AuthenticationController"*/-->
+<div th:fragment="message" th:if="${message != null}" th:switch="${message}">
+    <p th:case="'must_filled'" class="message" th:text="#{reg.msg.must_filled}"></p>
+    <p th:case="'exists'" class="message" th:text="#{reg.msg.exists}"></p>
+    <p th:case="'pass_mismatch'" class="message" th:text="#{reg.msg.pass_mismatch}"></p>
+    <p th:case="'agree'" class="message" th:text="#{reg.msg.agree}"></p>
+</div>
+</body>
+</html>

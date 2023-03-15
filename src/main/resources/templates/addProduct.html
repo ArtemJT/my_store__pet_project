@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: common_header(~{::title}, _)}">
+    <title th:text="#{product.add.title}"/>
+</head>
+<header th:replace="~{fragments/header :: header_bar}"></header>
+<body>
+
+<section class="h-100" style="background-color: #eee;">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <!--/*@thymesVar id="productDto" type="com.example.my_store__pet_project.dto.ProductDto"*/-->
+            <div class="col-md-6 col-lg-5 d-none d-md-block" th:object="${productDto}">
+
+                <!--/*@thymesVar id="message" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+                <div th:switch="${message}">
+                    <p th:case="'select'" class="message" th:text="#{product.add.msg.select}"></p>
+                    <p th:case="'model'" class="message" th:text="#{product.add.msg.model}"></p>
+                    <p th:case="'exists'" class="message" th:text="#{product.add.msg.exists}"></p>
+                    <p th:case="'details'" class="message" th:text="#{product.add.msg.details}"></p>
+                    <p th:case="'file'" class="message" th:text="#{product.add.msg.file}"></p>
+                    <p th:case="'exception'" class="message" th:text="#{product.add.msg.exception}"></p>
+                    <!--/*@thymesVar id="newProductDto" type="com.example.my_store__pet_project.dto.ProductDto"*/-->
+                    <div th:case="'added'" th:object="${newProductDto}">
+                        <p class="message" th:text="#{product.add.msg.added}"></p>
+                        <!-- Modal -->
+                        <button
+                                type="button"
+                                class="btn btn-secondary btn-sm btn-rounded"
+                                data-bs-toggle="modal" th:data-bs-target="*{'#modal'+productId}"
+                                th:text="#{product.table.details}">
+                        </button>
+                        <div class="modal fade" th:id="*{'modal'+productId}" tabindex="-1"
+                             aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalLabel" th:text="*{model}"/>
+                                    </div>
+                                    <div class="modal-body d-flex align-items-center justify-content-center">
+                                        <div class="card" style="width: 18rem;">
+                                            <img th:src="*{getImageLink}" class="card-img-top" alt="Image" src=""/>
+                                            <div class="card-body">
+                                                <div class="text-center">
+                                                    <h5 class="card-title" th:text="*{productDetailsDto.name}"/>
+                                                    <p class="text-muted mb-4" th:text="*{categoryDto.name}"/>
+                                                </div>
+                                                <div>
+                                                    <div class="d-flex justify-content-between">
+                                                        <span th:text="#{product.table.date}"/><span
+                                                            th:text="*{dateAdded}"/>
+                                                    </div>
+                                                    <hr class="my-0"/>
+                                                    <div class="d-flex justify-content-between">
+                                                        <span th:text="#{product.table.measure}"/><span
+                                                            th:text="*{categoryDto.measure}"/>
+                                                    </div>
+                                                    <hr class="my-0"/>
+                                                    <div class="d-flex justify-content-between">
+                                                        <span th:text="#{product.table.status}"/><span
+                                                            th:text="*{stockStatusDto.status}"/>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-0"/>
+                                                <div class="d-flex justify-content-between total font-weight-bold mt-4">
+                                                    <span th:text="#{product.table.price}"/><span
+                                                        th:text="'$'+*{price}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                                th:text="#{product.table.close}">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <form th:action="@{/products/addProduct}" enctype="multipart/form-data" method="post">
+                    <div class="input-group my-3 d-inline-flex justify-content">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" th:text="#{product.add.select}"/>
+                        </div>
+                        <label>
+                            <!--/*@thymesVar id="categoryDto" type="com.example.my_store__pet_project.dto.CategoryDto"*/-->
+                            <select th:field="${categoryDto.categoryId}"
+                                    class="form-control select-input placeholder-active active">
+                                <option selected hidden value="" th:text="#{product.add.category}"></option>
+                                <!--/*@thymesVar id="category" type="com.example.my_store__pet_project.dto.CategoryDto"*/-->
+                                <option th:each="category : ${categories}" th:value="${category.categoryId}"
+                                        th:text="${category.name}"></option>
+                            </select>
+                        </label>
+                        <label>
+                            <!--/*@thymesVar id="stockStatusDto" type="com.example.my_store__pet_project.dto.StockStatusDto"*/-->
+                            <select th:field="${stockStatusDto.statusId}"
+                                    class="form-control select-input placeholder-active active">
+                                <option selected hidden value="" th:text="#{product.add.status}"></option>
+                                <!--/*@thymesVar id="status" type="com.example.my_store__pet_project.dto.StockStatusDto"*/-->
+                                <option th:each="status : ${statuses}" th:value="${status.statusId}"
+                                        th:text="${status.status}"></option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend d-flex">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <label>
+                            <input
+                                    th:field="*{price}"
+                                    type="number"
+                                    class="form-control"
+                                    step="0.01"
+                                    min="0"
+                                    th:placeholder="#{product.add.price}"
+                            />
+                        </label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input
+                                id="model"
+                                th:field="*{model}"
+                                type="text"
+                                class="form-control"
+                        />
+                        <label for="model" th:text="#{product.add.model}"/>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea
+                                id="details"
+                                class="form-control"
+                                th:field="${productDetailsDto.name}">
+                            </textarea>
+                        <label for="details" th:text="#{product.add.details}"/>
+
+                    </div>
+
+                    <label class="form-label" for="customFile" th:text="#{product.add.image}"/>
+                    <input name="file" type="file" class="form-control" id="customFile"/>
+
+                    <button type="submit" class="btn btn-primary my-3" th:text="#{product.add.button.add}"></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<footer th:replace="~{fragments/footer :: footer_bar}"></footer>
+
+</html>

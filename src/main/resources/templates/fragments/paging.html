@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en" class="no-js" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--/*@thymesVar id="sort" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+<!--/*@thymesVar id="size" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+<!--/*@thymesVar id="desc" type="com.example.my_store__pet_project.controller.ProductController"*/-->
+<a th:fragment="paging(pageNum, label, tooltip)" class="page-link"
+   th:href="@{'/products?' + ${sort!=null && sort!=''? 'sort=' + sort : 'dateAdded'} + '&size=' + ${size} + '&page=' + ${pageNum} + '&desc=' + ${desc}}"
+   th:title="${tooltip}" rel="tooltip" th:text="${label}"/>
+</body>
+</html>
