@@ -58,6 +58,6 @@ public class UsersService {
     }
 
     public boolean isUserNameExists(String name) {
-        return usersRepository.existsUserInfoByName(name);
+        return usersRepository.existsUsersByName(name);
     }
 }
