@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 
@@ -45,25 +46,26 @@ public class AuthenticationController {
     }
 
     @PostMapping("registration")
-    public String signUp(@RequestParam String username,
+    public String signUp(RedirectAttributes redirectAttributes,
+                         @RequestParam String username,
                          @RequestParam String password,
                          @RequestParam String passwordRepeat,
                          @RequestParam String email,
                          @RequestParam(required = false) String termsAgree, Model model) {
         log.info("registration post page");
-        String msg = null;
+        String message = null;
         if (username.equals("") || password.equals("") || email.equals("")) {
-            msg = "must_filled";
+            message = "must_filled";
         } else if (usersService.isUserNameExists(username)) {
-            msg = "exists";
+            message = "exists";
         } else if (!password.equals(passwordRepeat)) {
-            msg = "pass_mismatch";
+            message = "pass_mismatch";
         } else if (termsAgree == null) {
-            msg = "agree";
+            message = "agree";
         }
-        if (msg != null) {
-            model.addAttribute("message", msg);
-            return "auth/registration";
+        if (message != null) {
+            redirectAttributes.addFlashAttribute("message", message);
+            return "redirect:/auth/registration";
         }
         UsersDto usersDto = new UsersDto();
         usersDto.setDateAdded(LocalDateTime.now());
